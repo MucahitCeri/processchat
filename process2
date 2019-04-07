@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+#_*_ coding:utf-8 _*_
+
+import os,signal,time
+
+message = "Hello, Process 1. I'm Process 2 :)"
+	
+def receive_signal(signum, stack):
+	time.sleep(2)   #Konsol takibi kolay olsun	
+	print('Received:', signum)
+
+def write (words):
+	file = open('/tmp/Chat.txt','w')
+	file.write(words)
+	file.close()
+
+
+
+signal.signal(signal.SIGUSR2, receive_signal)
+
+
+print('My PID is:', os.getpid())
+
+file = open('/tmp/Chat.txt','r')
+target = file.readline()
+file.close()
+print("Target Set")
+signal.pause() 
+
+
+while True:
+	write(message)	
+	os.kill(int(target),signal.SIGUSR1)
+	print('Writing...')
+	signal.pause()
+
